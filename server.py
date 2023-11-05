@@ -1,18 +1,20 @@
 import dash
+import json
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 from dash import dcc, html
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 from plotly import express as px
-from matplotlib import pyplot as plt
-
 from plotly import graph_objects as go
 
+# Importing dataset and interpretations
 data = pd.read_csv("Dataset/data_18_v4.csv")
+with open("./long_text.json", 'r') as file:
+	long_text = json.load(file)
+
 app = dash.Dash("Dashboard")
 
 identity_fields = {
@@ -37,37 +39,76 @@ categorical_fields = {
 	"smartway": "SmartWay"
 }
 
+# Static visualisation functions
+def static_sunburst():
+    figure = px.sunburst(
+        data,
+        path = ['veh_class', 'fuel'],
+        values = 'air_pollution_score'
+    )
+    figure.update_layout(
+        title = "Air Pollution Score Comparison between Vehicle Classes"
+    )
+    return figure
+
+
 # Define app layout
-app.layout = html.Div([
-	
-	html.H1("Interactive Dash App"),
+app.title = "Fuel Economy Data Analysis"
+app.layout = html.Div([	
+	html.Div([
+		html.H1("Fuel Economy Data Analytics"),
+		html.P(long_text["students"][0]),
+		html.P([
+			long_text["students"][1],
+			html.Br(),
+			long_text["students"][2],
+			html.Br(),
+			long_text["students"][3]
+		])
+	], className = 'header'),
 	
 	# Scatter Plot components
-	dcc.Dropdown(
-		id='scatter_x',
-		options=continuous_fields,
-		value='hwy_mpg'
-	),
-	dcc.Dropdown(
-		id='scatter_y',
-		options=continuous_fields,
-		value='city_mpg'
-	),
-	dcc.Graph(id='scatter-plot'),
+	html.Div([
+		html.H2("Interactive Plot 1: Scatter plot"),
+		dcc.Dropdown(
+			id = 'scatter_x',
+			options = continuous_fields,
+			value = 'hwy_mpg',
+			className = 'scatter-drop'
+		),
+		dcc.Dropdown(
+			id = 'scatter_y',
+			options = continuous_fields,
+			value = 'city_mpg',
+			className = 'scatter-drop'
+		),
+		dcc.Graph(id='scatter-plot'),
+	], className = 'scatter'),
+	
+	# Boxplot Components
+	html.Div([
+		html.H2("Interactive Plot 2: Box Plot"),
+		dcc.Dropdown(
+			id = 'boxplot_x',
+			options = categorical_fields,
+			value = 'trans',
+			className = 'box-drop'
+		),
+		dcc.Dropdown(
+			id = 'boxplot_y',
+			options = continuous_fields,
+			value = 'greenhouse_gas_score',
+			className = 'box-drop'
+		),
+		dcc.Graph(id='boxplot')
+	], className = 'box'),
 
+	# Sunburst Components
+	html.Div([
+		html.H2("Static Plot 1: Sunburst Plot"),
 
-	# Heatmap Components
-	dcc.Dropdown(
-		id = 'boxplot_x',
-		options = categorical_fields,
-		value = 'trans',
-	),
-	dcc.Dropdown(
-		id = 'boxplot_y',
-		options = continuous_fields,
-		value = 'greenhouse_gas_score'
-	),
-	dcc.Graph(id='boxplot')
+	    dcc.Graph(id='sunburst-plot', figure = static_sunburst())
+	], className = 'sunburst')
 ])
 
 # Define callback to update scatter plot based on dropdown selections
@@ -124,5 +165,4 @@ def update_heatmap(x_column, y_column):
 
 	return figure
 
-
-app.run_server()
+app.run_server(debug = True)

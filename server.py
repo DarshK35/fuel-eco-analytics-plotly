@@ -8,6 +8,7 @@ from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 from plotly import express as px
+from plotly import subplots as sp
 from plotly import graph_objects as go
 
 # Importing dataset and interpretations
@@ -20,7 +21,6 @@ app = dash.Dash("Dashboard")
 identity_fields = {
 	"model": "Car Model"
 }
-
 continuous_fields = {
 	"displ": "Displacement",
 	"air_pollution_score": "Air Pollution Score",
@@ -29,7 +29,6 @@ continuous_fields = {
 	"cmb_mpg": "Combined MPG",
 	"greenhouse_gas_score": "Greenhouse Gas Score"
 }
-
 categorical_fields = {
 	"cyl": "Number of Cylinders",
 	"trans": "Transmission Type",
@@ -98,10 +97,51 @@ def static_tree():
 		width = 1600
 	)
 	return figure
+def static_pair():
+	columns = ['city_mpg', 'hwy_mpg', 'cmb_mpg']
+	figure = sp.make_subplots(
+		rows = len(columns),
+		cols = len(columns),
+		shared_xaxes = False,
+		shared_yaxes = False
+	)
+
+	for i, col1 in enumerate(columns):
+		for j, col2 in enumerate(columns):
+			if col1 == col2:
+				trace = go.Histogram(
+					x = data[col1],
+					name = col1,
+					showlegend = False
+				)
+			else:
+				trace = go.Scatter(
+					x=data[col1],
+					y=data[col2],
+					mode='markers',
+					name = col1.split('_')[0] + ' vs ' + col2.split('_')[0]
+				)
+			figure.add_trace(trace, row=i + 1, col=j + 1)
+
+	# Customize the layout
+	for i, col in enumerate(columns):
+		figure.update_xaxes(title_text=col, row=len(columns), col=i + 1)
+		figure.update_yaxes(title_text=col, row=i + 1, col=1)
+
+	figure.update_layout(
+	    title='Miles Per Gallon Relationship',
+	    showlegend=False,
+	    height=1000,
+	    width=1000,
+	)
+
+	return figure
+
 
 # Define app layout
 app.title = "Fuel Economy Data Analysis"
-app.layout = html.Div([	
+app.layout = html.Div([
+	# Heading Components
 	html.Div([
 		html.H1("Fuel Economy Data Analytics"),
 		html.P(long_text["students"][0]),
@@ -114,7 +154,7 @@ app.layout = html.Div([
 		])
 	], className = 'header'),
 	
-	# Scatter Plot components
+	# Scatter Plot Components
 	html.Div([
 		html.H2("Interactive Plot 1: Scatter plot"),
 		
@@ -182,7 +222,14 @@ app.layout = html.Div([
 		html.H2("Static Plot 4: Treemap"),
 
 		dcc.Graph(id = 'treemap-plot', figure = static_tree())
-	], id = 'treemap', className = 'visual')
+	], id = 'treemap', className = 'visual'),
+
+	# Pairplot Components
+	html.Div([
+		html.H2("Static Plot 5: Pair Plot"),
+
+		dcc.Graph(id = 'pair-plot', figure = static_pair())
+	], id = 'pairplot', className = 'visual')
 ])
 
 # Define callback to update scatter plot based on dropdown selections

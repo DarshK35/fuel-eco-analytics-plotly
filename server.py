@@ -44,13 +44,14 @@ def static_sunburst():
 	figure = px.sunburst(
 		data,
 		path = ['veh_class', 'fuel'],
-		values = 'air_pollution_score'
+		values = 'air_pollution_score',
+		height = 960,
+		width = 960
 	)
 	figure.update_layout(
 		title = "Air Pollution Score Comparison between Vehicle Classes"
 	)
 	return figure
-
 def static_pie():
 	class_count = data['veh_class'].value_counts().reset_index()
 	class_count.columns = [
@@ -62,12 +63,13 @@ def static_pie():
 		values = 'count',
 		names = 'veh_class',
 		title = 'Vehicle Class Distribution',
-
+		height = 720,
+		width = 720
 	)
 	return figure
-
 def static_stack_bar():
 	veh_dist = data.groupby(['veh_class', 'fuel']).size().reset_index(name = 'count')
+	
 	figure = px.bar(
 		veh_dist,
 		x = 'veh_class',
@@ -75,7 +77,7 @@ def static_stack_bar():
 		color = 'fuel',
 		title = 'Vehicle and Fuel Type Distribution',
 		height = 960,
-		width = 1000
+		width = 1280
 	)
 	
 	figure.update_layout(
@@ -84,6 +86,17 @@ def static_stack_bar():
 		legend_title = 'Fuel Type'
 	)
 
+	return figure
+def static_tree():
+	figure = px.treemap(
+		data,
+		path = ['veh_class', 'trans'],
+		values = 'greenhouse_gas_score',
+		title = 'Greenhouse Gas Score vs Vehicle Class and Transmission Type',
+
+		height = 1000,
+		width = 1600
+	)
 	return figure
 
 # Define app layout
@@ -157,19 +170,25 @@ app.layout = html.Div([
 		dcc.Graph(id = 'pie-chart', figure = static_pie())
 	], id = 'pie', className = 'visual'),
 
-	# Stacked Bar Plot Component
+	# Stacked Bar Plot Components
 	html.Div([
 		html.H2("Static Plot 3: Stacked Bar Plot"),
 
 		dcc.Graph(id = 'stack-bar', figure = static_stack_bar())
-	], id = 'stack-bar', className = 'visual')
+	], id = 'stack-bar', className = 'visual'),
+
+	# Treemap Components
+	html.Div([
+		html.H2("Static Plot 4: Treemap"),
+
+		dcc.Graph(id = 'treemap-plot', figure = static_tree())
+	], id = 'treemap', className = 'visual')
 ])
 
 # Define callback to update scatter plot based on dropdown selections
 @app.callback(
 	Output('scatter-plot', 'figure'),
-	[Input('scatter_x', 'value'),
-	 Input('scatter_y', 'value')]
+	[Input('scatter_x', 'value'), Input('scatter_y', 'value')]
 )
 def update_scatter_plot(x_axis_column, y_axis_column):
 	figure = {
@@ -192,8 +211,7 @@ def update_scatter_plot(x_axis_column, y_axis_column):
 
 @app.callback(
 	Output('boxplot', 'figure'),
-	[Input('boxplot_x', 'value'),
-	 Input('boxplot_y', 'value')]
+	[Input('boxplot_x', 'value'), Input('boxplot_y', 'value')]
 )
 def update_heatmap(x_column, y_column):
 	figure = go.Figure()

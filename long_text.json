@@ -9,6 +9,6 @@
     "desc2":"We are using treemaps, as we can effectively visualize and compare data related to transmission, vehicle class, and greenhouse gas emissions which helps us to gain insights into their distribution, proportions, and relationships within the dataset to correctly analyze each vehical type.",
     "desc3":"A pie chart is being used to show vehicle class and their count because it visually represents the proportions or percentages of different categories within a dataset. ",
     "desc4":"A stacked bar chart is being used to display the number of type of vehicle class and which type of fuel do these vehicles use. It is used to show the difference in usage of fuels as one fuel is most commonly used i.e. Gasoline.",
-    "desc5":"",
+    "desc5":"Here, a sunburst chart is being used to display which fuel type contributes the most to air pollution and which fuel types different cars use. The reason for showing this visualization is to inform the user about which cars are the most harmful to the environment and urges them to not buy these car types.",
     "desc6":"",
 }

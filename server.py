@@ -44,8 +44,8 @@ def static_sunburst():
 		data,
 		path = ['veh_class', 'fuel'],
 		values = 'air_pollution_score',
-		height = 960,
-		width = 960
+		height = 720,
+		width = 720
 	)
 	figure.update_layout(
 		title = "Air Pollution Score Comparison between Vehicle Classes"
@@ -75,7 +75,7 @@ def static_stack_bar():
 		y = 'count',
 		color = 'fuel',
 		title = 'Vehicle and Fuel Type Distribution',
-		height = 960,
+		height = 840,
 		width = 1280
 	)
 	
@@ -93,7 +93,7 @@ def static_tree():
 		values = 'greenhouse_gas_score',
 		title = 'Greenhouse Gas Score vs Vehicle Class and Transmission Type',
 
-		height = 1000,
+		height = 840,
 		width = 1600
 	)
 	return figure
@@ -200,6 +200,7 @@ app.layout = html.Div([
 	html.Div([
 		html.H2("Static Plot 1: Sunburst Plot"),
 
+		html.P(long_text["sunburst"]),
 		dcc.Graph(id= ' sunburst-plot', figure = static_sunburst())
 	], id = 'sunburst', className = 'visual'),
 
@@ -207,6 +208,7 @@ app.layout = html.Div([
 	html.Div([
 		html.H2("Static Plot 2: Pie Chart"),
   
+		html.P(long_text["pie"]),
 		dcc.Graph(id = 'pie-chart', figure = static_pie())
 	], id = 'pie', className = 'visual'),
 
@@ -214,13 +216,15 @@ app.layout = html.Div([
 	html.Div([
 		html.H2("Static Plot 3: Stacked Bar Plot"),
 
+		html.P(long_text["stack-bar"]),
 		dcc.Graph(id = 'stack-bar', figure = static_stack_bar())
-	], id = 'stack-bar', className = 'visual'),
+	], id = 'stackbar', className = 'visual'),
 
 	# Treemap Components
 	html.Div([
 		html.H2("Static Plot 4: Treemap"),
 
+		html.P(long_text["treemap"]),
 		dcc.Graph(id = 'treemap-plot', figure = static_tree())
 	], id = 'treemap', className = 'visual'),
 
@@ -228,6 +232,7 @@ app.layout = html.Div([
 	html.Div([
 		html.H2("Static Plot 5: Pair Plot"),
 
+		html.P(long_text["pair"]),
 		dcc.Graph(id = 'pair-plot', figure = static_pair())
 	], id = 'pairplot', className = 'visual')
 ])
@@ -251,7 +256,9 @@ def update_scatter_plot(x_axis_column, y_axis_column):
 		'layout': {
 			'title': f'Scatter Plot ({continuous_fields[x_axis_column]} vs {continuous_fields[y_axis_column]})',
 			'xaxis': {'title': continuous_fields[x_axis_column]},
-			'yaxis': {'title': continuous_fields[y_axis_column]}
+			'yaxis': {'title': continuous_fields[y_axis_column]},
+			'height': 960,
+			'width': 960
 		}
 	}
 	return figure
@@ -279,7 +286,10 @@ def update_heatmap(x_column, y_column):
 	figure.update_layout(
 		title = f'Box Plot ({categorical_fields[x_column]} vs {continuous_fields[y_column]})',
 		xaxis_title = categorical_fields[x_column],
-		yaxis_title = continuous_fields[y_column]
+		yaxis_title = continuous_fields[y_column],
+		height = 840,
+		width = 1400
+
 	)
 
 	return figure

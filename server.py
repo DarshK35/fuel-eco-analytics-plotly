@@ -15,6 +15,8 @@ from plotly import graph_objects as go
 data = pd.read_csv("Dataset/data_18_v4.csv")
 with open("./long_text.json", 'r') as file:
 	long_text = json.load(file)
+with open("./catppuccin_mocha.json", 'r') as file:
+	colors = json.load(file)
 
 app = dash.Dash("Dashboard")
 
@@ -42,18 +44,25 @@ categorical_fields = {
 
 # Static visualisation functions
 def static_sunburst():
+	color_seq = list(colors.values())[:len(data['veh_class'].unique())]
 	figure = px.sunburst(
 		data,
 		path = ['veh_class', 'fuel'],
 		values = 'air_pollution_score',
+		color_discrete_sequence = color_seq,
 		height = 720,
 		width = 720
 	)
 	figure.update_layout(
-		title = "Air Pollution Score Comparison between Vehicle Classes"
+		title = "Air Pollution Score Comparison between Vehicle Classes",
+		title_font = dict(color = colors["subtext0"]),
+		plot_bgcolor = colors["surface1"],
+		paper_bgcolor = colors["surface2"]
 	)
 	return figure
 def static_pie():
+	color_seq = list(colors.values())[:len(data['veh_class'].unique())]
+
 	class_count = data['veh_class'].value_counts().reset_index()
 	class_count.columns = [
 		'veh_class', 'count'
@@ -63,12 +72,21 @@ def static_pie():
 		class_count,
 		values = 'count',
 		names = 'veh_class',
-		title = 'Vehicle Class Distribution',
+		color_discrete_sequence = color_seq,
 		height = 720,
 		width = 720
 	)
+
+	figure.update_layout(
+		title = 'Vehicle Class Distribution',
+		title_font = dict(color = colors["subtext0"]),
+		legend_font = dict(color = colors["subtext0"]),
+		plot_bgcolor = colors["surface1"],
+		paper_bgcolor = colors["surface2"]
+	)
 	return figure
 def static_stack_bar():
+	color_seq = list(colors.values())[:len(data['fuel'].unique())]
 	veh_dist = data.groupby(['veh_class', 'fuel']).size().reset_index(name = 'count')
 	
 	figure = px.bar(
@@ -76,28 +94,43 @@ def static_stack_bar():
 		x = 'count',
 		y = 'veh_class',
 		color = 'fuel',
-		title = 'Vehicle and Fuel Type Distribution',
+		color_discrete_sequence = color_seq,
 		orientation = 'h',
 		height = 840,
 		width = 1280
 	)
 	
 	figure.update_layout(
+		title = 'Vehicle and Fuel Type Distribution',
 		xaxis_title = 'Count',
 		yaxis_title = 'Vehicle Class',
-		legend_title = 'Fuel Type'
+		legend_title = 'Fuel Type',
+		title_font = dict(color = colors["subtext0"]),
+		legend_font = dict(color = colors["subtext0"]),
+		font = dict(color = colors["text"]),
+		plot_bgcolor = colors["surface1"],
+		paper_bgcolor = colors["surface2"]
 	)
 
 	return figure
 def static_tree():
+	color_seq = list(colors.values())[:len(data['veh_class'].unique())]
+
 	figure = px.treemap(
 		data,
 		path = ['veh_class', 'trans'],
 		values = 'greenhouse_gas_score',
-		title = 'Greenhouse Gas Score vs Vehicle Class and Transmission Type',
-
+		color_discrete_sequence = color_seq,
 		height = 840,
 		width = 1600
+	)
+
+	figure.update_layout(
+		title = 'Greenhouse Gas Score vs Vehicle Class and Transmission Type',
+		title_font = dict(color = colors["subtext0"]),
+		font = dict(color = colors["text"]),
+		plot_bgcolor = colors["surface1"],
+		paper_bgcolor = colors["surface2"]
 	)
 	return figure
 def static_pair():
@@ -115,13 +148,15 @@ def static_pair():
 				trace = go.Histogram(
 					x = data[col1],
 					name = col1,
-					showlegend = False
+					showlegend = False,
+					marker = dict(color = list(colors.values())[i * len(columns) + j])
 				)
 			else:
 				trace = go.Scatter(
 					x=data[col1],
 					y=data[col2],
 					mode='markers',
+					marker = dict(color = list(colors.values())[i * len(columns) + j]),
 					name = col1.split('_')[0] + ' vs ' + col2.split('_')[0]
 				)
 			figure.add_trace(trace, row=i + 1, col=j + 1)
@@ -133,6 +168,10 @@ def static_pair():
 
 	figure.update_layout(
 	    title='Miles Per Gallon Relationship',
+		title_font = dict(color = colors["subtext0"]),
+		plot_bgcolor = colors["surface1"],
+		paper_bgcolor = colors["surface2"],
+		font = dict(color = colors["text"]),
 	    showlegend=False,
 	    height=1000,
 	    width=1000,

@@ -18,15 +18,17 @@ with open("./long_text.json", 'r') as file:
 
 app = dash.Dash("Dashboard")
 
-identity_fields = {
-	"model": "Car Model"
-}
 continuous_fields = {
 	"displ": "Displacement",
-	"air_pollution_score": "Air Pollution Score",
 	"city_mpg": "City MPG",
 	"hwy_mpg": "Highway MPG",
 	"cmb_mpg": "Combined MPG",
+	"cyl": "Number of Cylinders",
+	"air_pollution_score": "Air Pollution Score",
+	"greenhouse_gas_score": "Greenhouse Gas Score"
+}
+score_fields = {
+	"air_pollution_score": "Air Pollution Score",
 	"greenhouse_gas_score": "Greenhouse Gas Score"
 }
 categorical_fields = {
@@ -190,7 +192,7 @@ app.layout = html.Div([
 		html.Label("Value: ", className = 'box-drop-label'),
 		dcc.Dropdown(
 			id = 'boxplot_y',
-			options = continuous_fields,
+			options = score_fields,
 			value = 'greenhouse_gas_score',
 			className = 'box-drop'
 		),
@@ -285,11 +287,11 @@ def update_boxplot(x_column, y_column):
 
 	# Customize the layout
 	figure.update_layout(
-		title = f'Box Plot ({categorical_fields[x_column]} vs {continuous_fields[y_column]})',
+		title = f'Box Plot ({categorical_fields[x_column]} vs {score_fields[y_column]})',
 		xaxis_title = categorical_fields[x_column],
-		yaxis_title = continuous_fields[y_column],
-		height = 80 * (max(data[y_column]) - min(data[y_column])),
-		width = max(80 * len(x_column), 1200)
+		yaxis_title = score_fields[y_column],
+		height = 800,
+		width = 50 + min(150 * len(data[x_column].unique()), 1600)
 
 	)
 

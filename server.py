@@ -10,6 +10,8 @@ from dash.exceptions import PreventUpdate
 from plotly import express as px
 from matplotlib import pyplot as plt
 
+from plotly import graph_objects as go
+
 data = pd.read_csv("Dataset/data_18_v4.csv")
 app = dash.Dash("Dashboard")
 
@@ -65,7 +67,7 @@ app.layout = html.Div([
 		options = continuous_fields,
 		value = 'greenhouse_gas_score'
 	),
-	html.Div(id='boxplot')
+	dcc.Graph(id='boxplot')
 ])
 
 # Define callback to update scatter plot based on dropdown selections
@@ -86,32 +88,41 @@ def update_scatter_plot(x_axis_column, y_axis_column):
 			}
 		],
 		'layout': {
-			'title': f'Scatter Plot ({x_axis_column} vs {y_axis_column})',
-			'xaxis': {'title': x_axis_column},
-			'yaxis': {'title': y_axis_column}
+			'title': f'Scatter Plot ({continuous_fields[x_axis_column]} vs {continuous_fields[y_axis_column]})',
+			'xaxis': {'title': continuous_fields[x_axis_column]},
+			'yaxis': {'title': continuous_fields[y_axis_column]}
 		}
 	}
 	return figure
 
 @app.callback(
-	Output('boxplot', 'children'),
+	Output('boxplot', 'figure'),
 	[Input('boxplot_x', 'value'),
 	 Input('boxplot_y', 'value')]
 )
 def update_heatmap(x_column, y_column):
-	# Create a Matplotlib heatmap
-	plt.figure(figsize=(10, 6))
-	sns.boxplot(x = x_column, y = y_column, data = data, palette = 'viridis')
-
-	plt.xlabel(categorical_fields[x_column])
-	plt.ylabel(continuous_fields[y_column])
-	plt.title(continuous_fields[y_column] + " by " + categorical_fields[x_column])
-	plt.tight_layout()
-
-	# Save the Matplotlib plot as an image and display it in Dash
-	plt.savefig('boxplot.png')
+	figure = go.Figure()
 	
-	return html.Img(src='boxplot.png')
+	figure.add_trace(go.Box(
+		x = data[x_column],
+		y = data[y_column],
+		boxpoints = 'outliers',
+		hoverinfo = 'y+text',
+		text = data['model'],
+		marker = dict(
+			size = 6,
+			opacity = 0.6
+		)
+	))
+
+	# Customize the layout
+	figure.update_layout(
+		title = f'Box Plot ({categorical_fields[x_column]} vs {continuous_fields[y_column]})',
+		xaxis_title = categorical_fields[x_column],
+		yaxis_title = continuous_fields[y_column]
+	)
+
+	return figure
 
 
 app.run_server()

@@ -71,17 +71,18 @@ def static_stack_bar():
 	
 	figure = px.bar(
 		veh_dist,
-		x = 'veh_class',
-		y = 'count',
+		x = 'count',
+		y = 'veh_class',
 		color = 'fuel',
 		title = 'Vehicle and Fuel Type Distribution',
+		orientation = 'h',
 		height = 840,
 		width = 1280
 	)
 	
 	figure.update_layout(
-		xaxis_title = 'Vehicle Class',
-		yaxis_title = 'Count',
+		xaxis_title = 'Count',
+		yaxis_title = 'Vehicle Class',
 		legend_title = 'Fuel Type'
 	)
 
@@ -267,7 +268,7 @@ def update_scatter_plot(x_axis_column, y_axis_column):
 	Output('boxplot', 'figure'),
 	[Input('boxplot_x', 'value'), Input('boxplot_y', 'value')]
 )
-def update_heatmap(x_column, y_column):
+def update_boxplot(x_column, y_column):
 	figure = go.Figure()
 	
 	figure.add_trace(go.Box(
@@ -287,8 +288,8 @@ def update_heatmap(x_column, y_column):
 		title = f'Box Plot ({categorical_fields[x_column]} vs {continuous_fields[y_column]})',
 		xaxis_title = categorical_fields[x_column],
 		yaxis_title = continuous_fields[y_column],
-		height = 840,
-		width = 1400
+		height = 80 * (max(data[y_column]) - min(data[y_column])),
+		width = max(80 * len(x_column), 1200)
 
 	)
 

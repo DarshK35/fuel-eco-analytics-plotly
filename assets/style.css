@@ -16,20 +16,7 @@ body div {
     padding: 30px 2.5% 20px;
 }
 
-
-.scatter {
-    background-color: white;
-    margin: 0px 2.5% 0px;
-    padding: 30px 2.5% 20px;
-}
-
-.box {
-    background-color: white;
-    margin: 0px 2.5% 0px;
-    padding: 30px 2.5% 20px;
-}
-
-.sunburst {
+.visual {
     background-color: white;
     margin: 0px 2.5% 0px;
     padding: 30px 2.5% 20px;

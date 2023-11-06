@@ -200,20 +200,23 @@ app.layout = html.Div([
 	html.Div([
 		html.H2("Interactive Plot 1: Scatter plot"),
 		
-		html.Label("X Value: ", className = 'scatter-drop-label'),
-		dcc.Dropdown(
-			id = 'scatter_x',
-			options = continuous_fields,
-			value = 'hwy_mpg',
-			className = 'scatter-drop'
-		),
-		html.Label("Y Value: ", className = 'scatter-drop-label'),
-		dcc.Dropdown(
-			id = 'scatter_y',
-			options = continuous_fields,
-			value = 'city_mpg',
-			className = 'scatter-drop'
-		),
+		html.Div([
+			html.Label("X Value: ", className = 'scatter-drop-label'),
+			dcc.Dropdown(
+				id = 'scatter_x',
+				options = continuous_fields,
+				value = 'hwy_mpg',
+				className = 'interactive-drop',
+			),
+			html.Br(),
+			html.Label("Y Value: ", className = 'scatter-drop-label'),
+			dcc.Dropdown(
+				id = 'scatter_y',
+				options = continuous_fields,
+				value = 'city_mpg',
+				className = 'interactive-drop'
+			)
+		], id = 'interactive-input'),
 		dcc.Graph(id = 'scatter-plot'),
 	], id = 'scatter', className = 'visual'),
 	
@@ -221,20 +224,23 @@ app.layout = html.Div([
 	html.Div([
 		html.H2("Interactive Plot 2: Box Plot"),
 
-		html.Label("Category: ", className = 'box-drop-label'),
-		dcc.Dropdown(
-			id = 'boxplot_x',
-			options = categorical_fields,
-			value = 'trans',
-			className = 'box-drop'
-		),
-		html.Label("Value: ", className = 'box-drop-label'),
-		dcc.Dropdown(
-			id = 'boxplot_y',
-			options = score_fields,
-			value = 'greenhouse_gas_score',
-			className = 'box-drop'
-		),
+		html.Div([
+			html.Label("Category: ", className = 'box-drop-label'),
+			dcc.Dropdown(
+				id = 'boxplot_x',
+				options = categorical_fields,
+				value = 'trans',
+				className = 'interactive-drop'
+			),
+			html.Br(),
+			html.Label("Value: ", className = 'box-drop-label'),
+			dcc.Dropdown(
+				id = 'boxplot_y',
+				options = score_fields,
+				value = 'greenhouse_gas_score',
+				className = 'interactive-drop'
+			)
+		], id="interactive-input"),
 		dcc.Graph(id = 'boxplot')
 	], id = 'box', className = 'visual'),
 
@@ -292,13 +298,16 @@ def update_scatter_plot(x_axis_column, y_axis_column):
 				'y': data[y_axis_column],
 				'mode': 'markers',
 				'text': data['model'],  # Display model names on hover
-				'marker': {'size': 10}
+				'marker': {'size': 10, 'color': colors["teal"]}
 			}
 		],
 		'layout': {
 			'title': f'Scatter Plot ({continuous_fields[x_axis_column]} vs {continuous_fields[y_axis_column]})',
 			'xaxis': {'title': continuous_fields[x_axis_column]},
 			'yaxis': {'title': continuous_fields[y_axis_column]},
+			'font': {'color': colors["text"]},
+			'plot_bgcolor': colors["surface1"],
+			'paper_bgcolor': colors["surface2"],
 			'height': 960,
 			'width': 960
 		}
@@ -320,7 +329,8 @@ def update_boxplot(x_column, y_column):
 		text = data['model'],
 		marker = dict(
 			size = 6,
-			opacity = 0.6
+			opacity = 0.6,
+			color = colors["lavender"]
 		)
 	))
 
@@ -329,8 +339,11 @@ def update_boxplot(x_column, y_column):
 		title = f'Box Plot ({categorical_fields[x_column]} vs {score_fields[y_column]})',
 		xaxis_title = categorical_fields[x_column],
 		yaxis_title = score_fields[y_column],
+		font = dict(color = colors["text"]),
+		plot_bgcolor = colors["surface1"],
+		paper_bgcolor = colors["surface2"],
 		height = 800,
-		width = 50 + min(150 * len(data[x_column].unique()), 1600)
+		width = 50 + min(150 * len(data[x_column].unique()), 1400)
 
 	)
 

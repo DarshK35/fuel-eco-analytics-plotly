@@ -5,7 +5,6 @@ body {
     margin: 0px;
     padding: 0px 2.5% 0px;
 }
-
 body div {
     margin: 0px px 0px;
 
@@ -25,3 +24,28 @@ body div {
     padding: 30px 2.5% 20px;
 }
 
+#interactive-input {
+    padding: 20px 0px;
+}
+#interactive-input label {
+    display: inline-block;
+    height: 36px;
+	width: 150px;
+	text-align: right;
+}
+#interactive-input .dash-dropdown {
+    display: inline-block;
+    width: 500px;
+    padding: 0px 10px;
+    margin: 0px 0px;
+}
+#interactive-input .interactive-drop div {
+    background-color: #181825;
+    color: #a6adc8;
+}
+#interactive-input .interactive-drop div div {
+    display: block;
+}
+#interactive-input .interactive-drop span {
+    color: #a6adc8;
+}

@@ -336,7 +336,7 @@ def update_boxplot(x_column, y_column):
 
 	# Customize the layout
 	figure.update_layout(
-		title = f'Box Plot ({categorical_fields[x_column]} vs {score_fields[y_column]})',
+		title = f'{categorical_fields[x_column]} vs {score_fields[y_column]}',
 		xaxis_title = categorical_fields[x_column],
 		yaxis_title = score_fields[y_column],
 		font = dict(color = colors["text"]),

@@ -49,3 +49,10 @@ body div {
 #interactive-input .interactive-drop span {
     color: #a6adc8;
 }
+
+#boxplot div {
+	transition: width 0.25s ease;
+}
+#boxplot svg {
+	transition: width 0.25s ease;
+}
